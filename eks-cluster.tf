@@ -1,3 +1,21 @@
+
+# add configuration to k8s provider to auth with the k8s cluster
+provider "kubernetes" {
+  host = data.aws_eks_cluster.myapp-cluster.endpoint
+  token = data.aws_eks_cluster_auth.myapp-cluster.token
+  client_certificate = base64decode(data.aws_eks_cluster.myapp-cluster.certificate_authority[0].data)
+}
+
+data "aws_eks_cluster" "myapp-cluster" {
+  name = module.eks.cluster_id
+}
+
+data "aws_eks_cluster_auth" "myapp-cluster" {
+  name = module.eks.cluster_id
+}
+
+
+# the eks module
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "18.20.4"
